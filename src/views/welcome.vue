@@ -1,9 +1,10 @@
 <template>
-   <router-view></router-view>
+<div>welcome</div>
 </template>
+
 <script>
 export default {
-  name: 'app'
+
 }
 </script>
 <style lang="less" scoped>
