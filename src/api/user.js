@@ -63,6 +63,12 @@ export const edituser = (data) => {
   })
 }
 
-// 分配角色
-
-export const allotuser =
+// 角色shuju  url pinjie body duixiang
+// 分配角色用户
+export const allotuser = (id, rid) => {
+  return axios({
+    method: 'put',
+    url: `users/${id}/role`,
+    data: { rid }
+  })
+}

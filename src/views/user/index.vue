@@ -36,7 +36,7 @@
        <el-button type="primary" plain icon="el-icon-edit" @click='showeditdilog(scope.row)'></el-button>
     </el-tooltip>
     <el-tooltip class="item" effect="dark" content="分配" placement="top-start">
-       <el-button type="success" plain icon="el-icon-check"></el-button>
+       <el-button type="success" plain icon="el-icon-check" @click="showallotdilog(scope.row)"></el-button>
     </el-tooltip>
     <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
       <el-button type="danger" plain icon="el-icon-delete" @click='deluserdata(scope.row.id)'></el-button>
@@ -85,19 +85,26 @@
 </el-dialog>
      <!-- 分配角色对话框 -->
 
-    <el-dialog ref="allotList" title="分配角色" :visible.sync="allotDialogFormVisible">
-    <el-form :model="allotList" :rules='rules' ref="allotList">
-    <el-form-item  prop="username" label="用户名" :label-width="'100px'">
-      <el-input v-model="editList.username" auto-complete="off"  disabled></el-input>
+    <el-dialog  title="分配角色" :visible.sync="allotDialogFormVisible">
+    <el-form :model="allotList" :label-width="'120px'" >
+    <el-form-item  label="用户名">
+      <el-input v-model="allotList.username" auto-complete="off"  style="width:120px" disabled></el-input>
     </el-form-item>
-    <el-form-item  prop="username" label="角色" :label-width="'100px'">
-      <el-input v-model="editList.username" auto-complete="off"  disabled></el-input>
+    <el-form-item  label="角色" >
+     <el-select v-model="allotList.rid" clearable placeholder="请选择">
+    <el-option
+      v-for="item in rolelist"
+      :key="item.id"
+      :label="item.roleName"
+      :value="item.id">
+    </el-option>
+   </el-select>
     </el-form-item>
 
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="allotDialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="allotDialogFormVisible">确 定</el-button>
+    <el-button type="primary" @click="changeallotuser">确 定</el-button>
   </div>
 </el-dialog>
 
@@ -126,10 +133,22 @@
 
 </template>
 <script>
-import { getUserList, getaddList, deluser, updatauserstatus, edituser } from '../../api/user.js'
+import { getUserList, getaddList, deluser, updatauserstatus, edituser, allotuser } from '../../api/user.js'
+import { getrolelist } from '../../api/role.js'
 export default {
   data () {
     return {
+      // xianze下拉列表数据
+      value4: '',
+      // 分配框的下拉列表shuju
+      rolelist: [],
+      // 分配角色
+      allotList: {
+        username: '',
+        id: '',
+        rid: ''
+      },
+      allotDialogFormVisible: false,
       // 编辑
       editList: {
         username: '',
@@ -175,11 +194,43 @@ export default {
   },
   mounted () {
     this.init()
+    // 获取所有列表数据
+    getrolelist()
+      .then(res => {
+        if (res.data.meta.status === 200) {
+          this.rolelist = res.data.data
+        }
+      })
   },
   methods: {
+    // 显示分配角色
+    showallotdilog (row) {
+      this.allotDialogFormVisible = true
+      this.allotList.username = row.username
+      this.allotList.id = row.id
+      this.allotList.rid = row.rid
+    },
+
+    // 判断是否选择角色
+    changeallotuser () {
+      if (!this.allotList.rid) {
+        this.$message.warning('请先选择角色')
+        return false
+      }
+      // 获取分配角色数据
+      console.log(this.allotList.rid)
+      allotuser(this.allotList.id, this.allotList.rid)
+        .then(res => {
+          console.log(res)
+          if (res.data.meta.status === 200) {
+            this.$message.success(res.data.meta.msg)
+            this.allotDialogFormVisible = false
+          }
+        })
+    },
     // 编辑
     showeditdilog (row) {
-      console.log(row)
+      // console.log(row)
       this.editDialogFormVisible = true
       this.editList.id = row.id
       this.editList.username = row.username
@@ -189,10 +240,10 @@ export default {
     getedituser () {
       this.$refs.editList.validate(valid => {
         if (valid) {
-          console.log(this.editList)
+          // console.log(this.editList)
           edituser(this.editList)
             .then(res => {
-              console.log(res, 'thfdghdg')
+              // console.log(res, 'thfdghdg')
               if (res.data.meta.status === 200) {
                 this.$message.success('编辑成功')
                 this.editDialogFormVisible = false
@@ -208,10 +259,10 @@ export default {
     },
     // 修改用户状态
     changestatus (id, type) {
-      console.log(id, type)
+      // console.log(id, type)
       updatauserstatus(id, type)
         .then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.data.meta.status === 200) {
             this.$message.success('修改成功!')
           }
@@ -232,7 +283,7 @@ export default {
         .then(() => {
           deluser(id)
             .then(res => {
-              console.log(res)
+              // console.log(res)
               if (res.data.meta.status === 200) {
                 // 判断删除之后，当前页还有没有数据，如果有数据，就保持页码为当前页，否则就到上一页
                 this.user.pagenum = Math.ceil((this.user.total - 1) / this.user.pagesize) < this.user.pagenum ? --this.user.pagenum : this.user.pagenum
@@ -255,7 +306,7 @@ export default {
         if (valid) {
           getaddList(this.addList)
             .then(res => {
-              console.log(res)
+              // console.log(res)
               if (res.data.meta.status === 201) {
                 this.addDialogFormVisible = false
                 this.$refs.addList.resetFields()
