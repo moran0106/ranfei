@@ -6,7 +6,7 @@
         <el-menu
           :router='true'
           :unique-opene="true"
-          :default-active="'2-2'"
+          :default-active="'/home/role'"
           class="el-menu-vertical-demo"
           background-color=" rgb(108, 145, 192)"
           text-color="black"
@@ -30,13 +30,13 @@
               <i class="el-icon-location"></i>
               <span>权限管理</span>
             </template>
-            <el-menu-item index="2-1">
-              <i class="el-icon-menu"></i>
-              <span slot="title">权限管理</span>
-            </el-menu-item>
-            <el-menu-item index="2-2">
+            <el-menu-item index="/home/right">
               <i class="el-icon-menu"></i>
               <span slot="title">权限列表</span>
+            </el-menu-item>
+            <el-menu-item index="/home/role">
+              <i class="el-icon-menu"></i>
+              <span slot="title">角色管理</span>
             </el-menu-item>
           </el-submenu>
           <!-- 商品管理 -->
