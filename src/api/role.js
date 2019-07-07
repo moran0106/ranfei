@@ -27,3 +27,20 @@ export const delroleright = (roleId, rightId) => {
     url: `roles/${roleId}/rights/${rightId}`
   })
 }
+
+// 角色授权接口   roleId:角色id  rids:权限 ID 列表
+export const roleallot = (roleId, rids) => {
+  return axios({
+    method: 'post',
+    url: `roles/${roleId}/rights`,
+    data: { rids }
+  })
+}
+
+// 删除角色
+export const delrole = (id) => {
+  return axios({
+    url: `roles/${id}`,
+    method: 'delete'
+  })
+}

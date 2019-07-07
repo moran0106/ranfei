@@ -205,6 +205,7 @@ export default {
   methods: {
     // 显示分配角色
     showallotdilog (row) {
+      console.log(row)
       this.allotDialogFormVisible = true
       this.allotList.username = row.username
       this.allotList.id = row.id
@@ -225,6 +226,7 @@ export default {
           if (res.data.meta.status === 200) {
             this.$message.success(res.data.meta.msg)
             this.allotDialogFormVisible = false
+            this.init()
           }
         })
     },
