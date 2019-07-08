@@ -7,7 +7,7 @@
       <el-breadcrumb-item>角色列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 添加按钮 -->
-    <el-button type="primary" plain style="margin-bottom:10px">添加角色</el-button>
+    <el-button type="primary" plain style="margin-bottom:10px" @click='addroleDialogFormVisible=true'>添加角色</el-button>
     <!-- 表单 -->
     <el-table :data="rolelist" border style="width: 100%">
       <el-table-column type="expand">
@@ -89,16 +89,41 @@
       </div>
     </el-dialog>
     <!-- 添加角色对话框 -->
+      <el-dialog ref="addlist" title="添加角色列表" :visible.sync="addroleDialogFormVisible">
+    <el-form :model="addlist" :rules='rules' ref="addlist">
+    <el-form-item  prop="roleName" label="角色名称" :label-width="'100px'">
+      <el-input v-model="addlist.roleName" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item  prop="roleDesc" label="角色描述" :label-width="'100px'">
+      <el-input v-model="addlist.roleDesc" auto-complete="off"></el-input>
+    </el-form-item>
 
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="addroleDialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addrloe()" >确 定</el-button>
+  </div>
+</el-dialog>
   </div>
 </template>
 
 <script>
-import { getrolelist, delroleright, roleallot, delrole } from '../../api/role.js'
+import { getrolelist, delroleright, roleallot, delrole, addrloe } from '../../api/role.js'
 import { getright } from '../../api/right.js'
 export default {
   data () {
     return {
+      addlist: {
+        roleName: '',
+        roleDesc: ''
+      },
+      rules: {
+        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+        roleDesc: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
+
+      },
+
+      addroleDialogFormVisible: false,
       rolelist: [],
       roleid: '',
       // 删除指定授权
@@ -115,6 +140,19 @@ export default {
     this.init()
   },
   methods: {
+    // 添加角色
+    addrloe () {
+      console.log(this.addlist, 'this.addlist', addrloe)
+      addrloe(this.addlist)
+        .then(res => {
+          console.log(res)
+          if (res.data.meta.status === 201) {
+            this.$message.success(res.data.meta.msg)
+            this.addroleDialogFormVisible = false
+            this.init()
+          }
+        })
+    },
     // 删除角色
     roledel (id) {
       this.$confirm('此操作将永久删除该用户, 是否继续?', '删除提示', {
@@ -130,9 +168,6 @@ export default {
                 this.$$message.success(res.data.meta.msg)
                 this.init()
               }
-            })
-            .catch(err1 => {
-              this.$message.error('删除失败')
             })
         })
         .catch(() => {

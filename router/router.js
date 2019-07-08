@@ -35,17 +35,17 @@ export default new VueRouter({
         },
         {
           name: 'user',
-          path: 'user',
+          path: 'users',
           component: user
         },
         {
           name: 'role',
-          path: 'role',
+          path: 'roles',
           component: role
         },
         {
           name: 'right',
-          path: 'right',
+          path: 'rights',
           component: right
         }
       ]

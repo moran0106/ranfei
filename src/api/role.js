@@ -44,3 +44,19 @@ export const delrole = (id) => {
     method: 'delete'
   })
 }
+
+// // 获取添加角色
+// export const addrloe = (data) => {
+//   return axios({
+//     ulr: 'roles',
+//     method: 'post',
+//     data: data
+//   })
+// }
+export const addrloe = (data) => {
+  return axios({
+    method: 'post',
+    url: 'roles',
+    data
+  })
+}
